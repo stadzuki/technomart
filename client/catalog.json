@@ -1,0 +1,44 @@
+{
+    "catalog": [
+        {
+            "id": 1,
+            "url": "assets/img/catalog/",
+            "brand": "BOSCH",
+            "title": "Перфоратор BOSCH BFG 2000",
+            "price": "25500",
+            "discount": "24990",
+            "flag": "",
+            "isElectric": false
+        },
+        {
+            "id": 2,
+            "url": "assets/img/catalog/",
+            "brand": "BOSCH",
+            "title": "Перфоратор BOSCH BFG 3000",
+            "price": "15500",
+            "discount": "14990",
+            "flag": "",
+            "isElectric": false
+        },
+        {
+            "id": 3,
+            "url": "assets/img/catalog/",
+            "brand": "BOSCH",
+            "title": "Перфоратор BOSCH BFG 4000",
+            "price": "35500",
+            "discount": "34990",
+            "flag": "new",
+            "isElectric": true
+        },
+        {
+            "id": 4,
+            "url": "assets/img/catalog/",
+            "brand": "BOSCH",
+            "title": "Перфоратор BOSCH BFG 1000",
+            "price": "5500",
+            "discount": "4990",
+            "flag": "promo",
+            "isElectric": false
+        }
+    ]
+}
