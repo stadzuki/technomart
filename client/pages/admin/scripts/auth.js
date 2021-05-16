@@ -1,4 +1,4 @@
-document.querySelector('form').addEventListener('submit', (e) => {
+document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const form = document.forms.authForm;
@@ -31,10 +31,31 @@ document.querySelector('form').addEventListener('submit', (e) => {
 
     if(password.length < 4 || password.length > 32)
         return sendNotif('Ошибка: Длинна Пароля должна составлять от 4-х до 32-х латинских символов!')
+
+    const response = await request('/api/admin', 'POST', {login, password})
+    console.log(response);
 })
 
-function request(url, method, data = null) {
-    
+async function request(url, method = 'GET', data = null) {
+    try{
+        const headers = {};
+        let body;
+
+        if(data) {
+            headers['Content-Type'] = 'application/json';
+            body = JSON.stringify(data);
+        }
+
+        const response = await fetch(url, {
+            method,
+            headers,
+            body
+        });
+
+        return await response.json()
+    } catch(err) {
+        console.log('Request error:', err.message)
+    }
 }
 
 function sendNotif(text) {
