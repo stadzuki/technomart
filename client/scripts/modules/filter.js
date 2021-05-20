@@ -1,64 +1,76 @@
 export default function () {
+    const MAX_BORDER_SCROLL = 180;
+    const MIN_BORDER_SCROLL = 0;
+
     const scrollMin = document.querySelector('.skroll_min');
     const scrollMax = document.querySelector('.skroll_max');
     const rangeBlock = document.querySelector('.range__block');
-    const rangeBar = document.querySelector('.range__bar');
+    const rangeBar = document.querySelector('.range__bar');    
 
-    console.log(scrollMax);
-
-    let moveCoord;
-
+    let scrollPos;
+    let scrollMinPos = 0;
+    let scrollMaxPos = 0;
+    let lastMovingPos = 0;
 
     scrollMin.addEventListener('mousedown', onScrollMouseDown);
     scrollMax.addEventListener('mousedown', onScrollMouseDown);
 
+
     function onScrollMouseDown(e) {
         const {target} = e;
         
-        moveCoord = e.clientX;
+        if(target.matches('.skroll_min')) {
+            scrollMinPos == 0 ? scrollMinPos = e.clientX : scrollMinPos;
+            scrollPos = scrollMinPos;
+        } else if(target.matches('.skroll_max')) {
+            scrollMaxPos == 0 ? scrollMaxPos = e.clientX : scrollMaxPos;
+            scrollPos = scrollMaxPos;
+        }
 
-        addEventListener('mouseup', onScrollMouseUp);
-        addEventListener('mousemove', onScrollMouseMove)
+        target.addEventListener('mousemove', onScrollMouseMove)
+        target.addEventListener('mouseup', onScrollMouseUp);
+        target.addEventListener('mouseout', onScrollMouseUp)
     }
 
     function onScrollMouseMove(e) {
-        
         const {target} = e;
+        const movingPos = e.clientX - scrollPos;
         
-        
+        let sibling;
+
         if(target.matches('.skroll_min')) {
-            let coord = e.clientX - moveCoord;
-            
-            if(e.clientX > moveCoord) {
-                if(scrollMax.offsetLeft - coord < 25)
-                return 1;
-                
-                target.style.left = `${coord}px`; 
-                // target.style.transform = `translateX(${coord}px)`;
-            } else {
-                if(coord < 0)
-                return 1;
-                
-                target.style.left = `${coord}px`; 
-                // target.style.transform = `translateX(${coord}px)`;
-            }
+            sibling = target.nextElementSibling;
+        } else if(target.matches('.skroll_max')) {
+            sibling = target.previousElementSibling;
         }
+
+        if(lastMovingPos < movingPos) { // to right
+            // if(movingPos >= MAX_BORDER_SCROLL)
+            //     return 1;
+
+            console.log('right');
+        }
+
+        if(lastMovingPos > movingPos) { // to left
+            // if(movingPos <= MIN_BORDER_SCROLL)
+            //     return 1;
+
+            console.log('left');
+        } 
         
-        if(target.matches('.skroll_max')) {
-            let coord = e.clientX - moveCoord;
-            if(e.clientX > moveCoord) {
-                target.style.transform = `translateX(${coord}px)`;
-            } else {
-                console.log(-coord - scrollMin.offsetLeft);
-                target.style.transform = `translateX(${coord}px)`;
-            }
-        }
+        target.style.transform = `translateX(${movingPos}px)`  
+        lastMovingPos = movingPos;  
     }
 
     function onScrollMouseUp(e) {
         const {target} = e;
 
-        removeEventListener('mousemove', onScrollMouseMove)
-        removeEventListener('mouseup', onScrollMouseUp)
+        target.removeEventListener('mousemove', onScrollMouseMove)
+        target.removeEventListener('mouseup', onScrollMouseUp)
+        target.removeEventListener('mouseout', onScrollMouseUp)
+    }
+
+    function getSiblingDistance(sibling) {
+        return sibling.style.transform
     }
 }
