@@ -32,8 +32,8 @@ document.querySelector('form').addEventListener('submit', async (e) => {
     if(password.length < 4 || password.length > 32)
         return sendNotif('Ошибка: Длинна Пароля должна составлять от 4-х до 32-х латинских символов!')
 
-    const response = await request('/api/admin', 'POST', {login, password})
-    console.log(response);
+    const response = await (await request('/api/admin', 'POST', {login, password})).text()
+    document.querySelector('html').innerHTML = response;
 })
 
 async function request(url, method = 'GET', data = null) {
@@ -52,7 +52,7 @@ async function request(url, method = 'GET', data = null) {
             body
         });
 
-        return await response.json()
+        return await response
     } catch(err) {
         console.log('Request error:', err.message)
     }

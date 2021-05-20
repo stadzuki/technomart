@@ -33,8 +33,7 @@ app.post('/api/admin', (req, resp) => {
 
     conn.query(`SELECT * FROM users WHERE login = '${login}' AND password = '${password}' AND isAdmin = 1`, function(err, result) {
         if(result.length > 0) {
-            // resp.sendFile(path.resolve(__dirname, 'client', 'pages/admin', 'panel.html'));
-            resp.json({message: 'redirect'})
+            resp.sendFile(path.resolve(__dirname, 'client', 'pages/admin', 'panel.html'));
         } else {
             resp.json({message: 'bad data'})
         }
