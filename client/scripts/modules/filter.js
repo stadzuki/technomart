@@ -1,9 +1,14 @@
 export default function () {
-    const MAX_BORDER_SCROLL = 180;
-    const MIN_BORDER_SCROLL = 0;
+    const MAX_RANGE_WIDTH = 180;
+    const SCROLL_WIDTH = 20; 
+    const SCROLL_BORDER = 20;
 
     const scrollMin = document.querySelector('.skroll_min');
     const scrollMax = document.querySelector('.skroll_max');
+    
+    scrollMin.style.transform = 'translateX(0px)';
+    scrollMax.style.transform = 'translateX(0px)';
+
     const rangeBlock = document.querySelector('.range__block');
     const rangeBar = document.querySelector('.range__bar');    
 
@@ -44,21 +49,24 @@ export default function () {
             sibling = target.previousElementSibling;
         }
 
-        if(lastMovingPos < movingPos) { // to right
-            // if(movingPos >= MAX_BORDER_SCROLL)
-            //     return 1;
+        let posLeftScroll = +getTranslate(scrollMin);
+        let posRightScroll = +getTranslate(scrollMax);
+        
+        // if((posRightScroll - posLeftScroll) == 20) {
+        // }
+        let border = 180 - (posLeftScroll + posRightScroll);
+        if(border <= 20)
+            return console.log('stop')
 
+        if(lastMovingPos < movingPos) { // to right
             console.log('right');
         }
-
+        
         if(lastMovingPos > movingPos) { // to left
-            // if(movingPos <= MIN_BORDER_SCROLL)
-            //     return 1;
-
             console.log('left');
         } 
-        
-        target.style.transform = `translateX(${movingPos}px)`  
+
+        target.style.transform = `translateX(${movingPos}px)`
         lastMovingPos = movingPos;  
     }
 
@@ -70,7 +78,13 @@ export default function () {
         target.removeEventListener('mouseout', onScrollMouseUp)
     }
 
-    function getSiblingDistance(sibling) {
-        return sibling.style.transform
+    function getTranslate(elem) {
+        return elem.style.transform.match(/\d+/).join()
     }
+
+    // function getBorderDistance(target) {//получение элемента на странице
+    //     // console.log(getTranslate(target))
+    //     // console.log('getBorderDistance', getTranslate(target))
+    //     return getTranslate(target);
+    // }
 }

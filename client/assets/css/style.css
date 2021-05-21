@@ -590,7 +590,7 @@ input[type="radio"].visually-hidden {
 
 .range__bar {
   height: 2px;
-  width: 80%;
+  width: 100%;
   margin-left: 0px;
   background: #00ca74;
 }
@@ -622,11 +622,11 @@ input[type="radio"].visually-hidden {
 }
 
 .skroll_min {
-  left: 0px;
+  transform: translateX(0px);
 }
 
 .skroll_max {
-  left: 78%;
+  left: 100%;
 }
 
 .price-filds {
