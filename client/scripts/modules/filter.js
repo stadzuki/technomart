@@ -1,7 +1,5 @@
 export default function () {
-    const MAX_RANGE_WIDTH = 180;
-    const SCROLL_WIDTH = 20; 
-    const SCROLL_BORDER = 20;
+    const MAX_RANGE_WIDTH = 180; 
 
     const scrollMin = document.querySelector('.skroll_min');
     const scrollMax = document.querySelector('.skroll_max');
@@ -15,11 +13,13 @@ export default function () {
     let scrollPos;
     let scrollMinPos = 0;
     let scrollMaxPos = 0;
+
     let lastMovingPos = 0;
+    let lastScrollMinPos = 0;
+    let lastScrollMaxPos = 0;
 
     scrollMin.addEventListener('mousedown', onScrollMouseDown);
     scrollMax.addEventListener('mousedown', onScrollMouseDown);
-
 
     function onScrollMouseDown(e) {
         const {target} = e;
@@ -39,35 +39,46 @@ export default function () {
 
     function onScrollMouseMove(e) {
         const {target} = e;
-        const movingPos = e.clientX - scrollPos;
         
+        let posRightScroll = +getScrollPos(scrollMax);
+        let posLeftScroll = +getScrollPos(scrollMin);
         let sibling;
+        
+        console.log('posRightScroll', posRightScroll)
+        console.log('posLeftScroll', posLeftScroll)
+
+        const movingPos = e.clientX - scrollPos;
+        const border = MAX_RANGE_WIDTH - (posLeftScroll + posRightScroll);
 
         if(target.matches('.skroll_min')) {
             sibling = target.nextElementSibling;
+            lastMovingPos = lastScrollMinPos;
         } else if(target.matches('.skroll_max')) {
             sibling = target.previousElementSibling;
+            lastMovingPos = lastScrollMaxPos;
         }
 
-        let posLeftScroll = +getTranslate(scrollMin);
-        let posRightScroll = +getTranslate(scrollMax);
-        
-        // if((posRightScroll - posLeftScroll) == 20) {
-        // }
-        let border = 180 - (posLeftScroll + posRightScroll);
-        if(border <= 20)
-            return console.log('stop')
-
-        if(lastMovingPos < movingPos) { // to right
-            console.log('right');
-        }
-        
         if(lastMovingPos > movingPos) { // to left
-            console.log('left');
-        } 
+            if(target.matches('.skroll_max') && border <= 20)
+                return console.log('stop left')
+            
+            // Проверка skroll_min на минимальную позицию (береме posLeftScroll и провермяем чтобы он был не меньше 0 иначе скролл влево невозможен)
 
-        target.style.transform = `translateX(${movingPos}px)`
-        lastMovingPos = movingPos;  
+            console.log('left')
+        }
+        
+        if(lastMovingPos < movingPos) { // to right
+            if(target.matches('.skroll_min') && border <= 20)
+                return console.log('stop right')
+            
+            // Проверка skroll_max на максимальную позицию (береме posRightScroll и провермяем чтобы он был не меньше 0 иначе скролл вправо невозможен)
+
+            console.log('right')
+        }
+
+        target.style.transform = `translateX(${movingPos}px)`;
+
+        target.matches('.skroll_min') ? lastScrollMinPos = movingPos : lastScrollMaxPos = movingPos;
     }
 
     function onScrollMouseUp(e) {
@@ -78,13 +89,7 @@ export default function () {
         target.removeEventListener('mouseout', onScrollMouseUp)
     }
 
-    function getTranslate(elem) {
+    function getScrollPos(elem) {
         return elem.style.transform.match(/\d+/).join()
     }
-
-    // function getBorderDistance(target) {//получение элемента на странице
-    //     // console.log(getTranslate(target))
-    //     // console.log('getBorderDistance', getTranslate(target))
-    //     return getTranslate(target);
-    // }
 }
