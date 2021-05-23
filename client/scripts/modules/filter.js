@@ -1,14 +1,15 @@
 export default function () {
     const MAX_RANGE_WIDTH = 180; 
 
+    /* Вычеслять растояние между двумя скролами, а двигать бар только margin и тем временем высчитывать его ширину между двумя скролами */
+
     const scrollMin = document.querySelector('.skroll_min');
     const scrollMax = document.querySelector('.skroll_max');
-    
+    const rangeBar = document.querySelector('.range__bar');    
+
     scrollMin.style.transform = 'translateX(0px)';
     scrollMax.style.transform = 'translateX(0px)';
-
-    const rangeBlock = document.querySelector('.range__block');
-    const rangeBar = document.querySelector('.range__bar');    
+    rangeBar.style.width = `${MAX_RANGE_WIDTH}px`;
 
     let scrollPos;
     let scrollMinPos = 0;
@@ -44,11 +45,8 @@ export default function () {
         let posLeftScroll = +getScrollPos(scrollMin);
         let sibling;
         
-        console.log('posRightScroll', posRightScroll)
-        console.log('posLeftScroll', posLeftScroll)
-
         const movingPos = e.clientX - scrollPos;
-        const border = MAX_RANGE_WIDTH - (posLeftScroll + posRightScroll);
+        const border = MAX_RANGE_WIDTH - (posLeftScroll + -1 * (posRightScroll));
 
         if(target.matches('.skroll_min')) {
             sibling = target.nextElementSibling;
@@ -59,26 +57,48 @@ export default function () {
         }
 
         if(lastMovingPos > movingPos) { // to left
-            if(target.matches('.skroll_max') && border <= 20)
-                return console.log('stop left')
+            if(target.matches('.skroll_max') && border <= 20) {
+                return 1;
+            } else if(target.matches('.skroll_max')) {
+                let calculateBarValue = MAX_RANGE_WIDTH - (-1 * movingPos);
+                rangeBar.style.width = `${calculateBarValue}px`;
+            }
             
-            // Проверка skroll_min на минимальную позицию (береме posLeftScroll и провермяем чтобы он был не меньше 0 иначе скролл влево невозможен)
+            if(target.matches('.skroll_min') && posLeftScroll <= 0) {
+                return 1;
+            } else if(target.matches('.skroll_min')) {
+                let calculateBarValue = MAX_RANGE_WIDTH + (-1 * movingPos);
+                rangeBar.style.width = `${calculateBarValue}px`;
+                rangeBar.style.marginLeft = `${posLeftScroll + 2}px`;
+            }
 
             console.log('left')
         }
         
         if(lastMovingPos < movingPos) { // to right
-            if(target.matches('.skroll_min') && border <= 20)
-                return console.log('stop right')
+            if(target.matches('.skroll_min') && border <= 20) {
+                return 1;
+            } else if(target.matches('.skroll_min')) {
+                let calculateBarValue = MAX_RANGE_WIDTH + (-1 * movingPos);
+                rangeBar.style.width = `${calculateBarValue}px`;
+                rangeBar.style.marginLeft = `${posLeftScroll + 3}px`;
+            }
             
-            // Проверка skroll_max на максимальную позицию (береме posRightScroll и провермяем чтобы он был не меньше 0 иначе скролл вправо невозможен)
+            if(target.matches('.skroll_max') && posRightScroll >= 0) {
+                return 1;
+            } else if(target.matches('.skroll_max')) {
+                let calculateBarValue = MAX_RANGE_WIDTH - (-1 * movingPos);
+                rangeBar.style.width = `${calculateBarValue}px`;
+            }
 
             console.log('right')
         }
 
         target.style.transform = `translateX(${movingPos}px)`;
 
-        target.matches('.skroll_min') ? lastScrollMinPos = movingPos : lastScrollMaxPos = movingPos;
+        target.matches('.skroll_min')
+            ? lastScrollMinPos = movingPos
+            : lastScrollMaxPos = movingPos;
     }
 
     function onScrollMouseUp(e) {
@@ -90,6 +110,6 @@ export default function () {
     }
 
     function getScrollPos(elem) {
-        return elem.style.transform.match(/\d+/).join()
+        return elem.style.transform.match(/\-?\d+/).join()
     }
 }
